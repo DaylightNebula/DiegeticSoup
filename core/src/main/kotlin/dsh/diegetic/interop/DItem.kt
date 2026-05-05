@@ -1,3 +1,6 @@
 package dsh.diegetic.interop
 
-interface DItem
+interface DItem {
+    fun typeKey(): String = "minecraft:feather"
+    fun customModelData(): Int? = null
+}
