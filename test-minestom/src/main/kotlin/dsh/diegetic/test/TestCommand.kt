@@ -2,6 +2,8 @@ package dsh.diegetic.test
 
 import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.DiegeticController
+import dsh.diegetic.configurable.ConfigurableDiegeticElement
+import dsh.diegetic.configurable.DiegeticElementConfig
 import dsh.diegetic.elements.DynamicParentElement
 import dsh.diegetic.elements.StaticItemElement
 import dsh.diegetic.elements.StaticParentElement
@@ -24,6 +26,7 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import java.io.File
 import kotlin.math.PI
 import kotlin.math.cos
 
@@ -38,12 +41,16 @@ class TestCommand: Command("test") {
         addSyntax({ sender, context ->
             val number = context.get(numberArgument)
             if (number == null) return@addSyntax
-            when (number) {
-                0 -> test0(sender as Player)
-                1 -> test1(sender as Player)
-                2 -> test2(sender as Player)
-                else -> sender.sendMessage("Invalid test number!")
-            }
+
+            try {
+                when (number) {
+                    0 -> test0(sender as Player)
+                    1 -> test1(sender as Player)
+                    2 -> test2(sender as Player)
+                    3 -> test3(sender as Player)
+                    else -> sender.sendMessage("Invalid test number!")
+                }
+            } catch (e: Exception) { e.printStackTrace() }
         }, numberArgument)
     }
 
@@ -116,6 +123,20 @@ class TestCommand: Command("test") {
                     MiniMessage.miniMessage().deserialize("<red>Hello world!"),
                     Matrix4f().scale(0.5f).rotateY(PI.toFloat()).translate(0f, -0.2f, -1f)
                 )
+            )
+        )
+    }
+
+    fun test3(player: Player) {
+        val configText = File("./test-minestom/configs/test1.json").readText()
+        val config = DiegeticElementConfig.deserialize(configText)
+
+        DiegeticAPI.get().addController(
+            DiegeticController(
+                viewerController = SinglePlayerNearbyViewerController(MinestomPlayer(player), MinestomLocation(player.position), 30.0),
+                positionController = PlayerPositionController(MinestomPlayer(player), Vector3f()),
+                parentEntity = MinestomEntity(player),
+                element = ConfigurableDiegeticElement("test1", config)
             )
         )
     }

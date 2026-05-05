@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.3.21"
+    kotlin("plugin.serialization") version "2.3.21"
 }
 
 kotlin {
@@ -8,6 +9,7 @@ kotlin {
 
 allprojects {
     apply(plugin = "kotlin")
+    apply(plugin = "kotlinx-serialization")
 
     group = "dsh.diegetic"
     version = "1.0.0"
