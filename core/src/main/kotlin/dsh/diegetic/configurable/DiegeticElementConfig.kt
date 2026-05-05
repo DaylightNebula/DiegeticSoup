@@ -28,9 +28,12 @@ sealed class DiegeticElementTypeConfig {
     @Serializable
     @SerialName("item")
     data class ItemElementConfig(
-        val type: String = "OAK_PLANKS",
+        val item: String = "minecraft:feather",
         val customModelData: Int? = null
-    ): DiegeticElementTypeConfig(), DItem
+    ): DiegeticElementTypeConfig(), DItem {
+        override fun typeKey() = item
+        override fun customModelData() = customModelData
+    }
 
     @Serializable
     @SerialName("text")

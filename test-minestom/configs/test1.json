@@ -16,7 +16,7 @@
         "item": "minecraft:oak_planks"
       },
       "position": { "x": 0, "y": 0.2, "z": -1 },
-      "rotation": { "yaw": 3.1415, "pitch": 0, "roll": 0 },
+      "rotation": { "yaw": 0.0, "pitch": 0, "roll": 0 },
       "scale": { "x": 0.3, "y": 0.3, "z": 0.3 }
     }
   ]
