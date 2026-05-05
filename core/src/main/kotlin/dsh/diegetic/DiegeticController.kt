@@ -88,10 +88,18 @@ class DiegeticController(
             }
         }
 
+        // apply passenger updates
         if (parentEntity != null && activeEntitiesChanged) {
             DiegeticAPI.get()
                 .getPacketAPI()
                 .setEntityPassengers(viewers + toAdd, parentEntity.id(), entityIds.keys)
+        }
+
+        // if any entities left in removed, remove them from clients
+        if (removed.isNotEmpty()) {
+            DiegeticAPI.get()
+                .getPacketAPI()
+                .removeEntities(viewers, removed.keys)
         }
 
         // save viewer updates

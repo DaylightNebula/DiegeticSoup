@@ -4,11 +4,20 @@
     {
       "element": {
         "type": "text",
-        "text": "<red>Hello World!"
+        "text": "<red>Hello world!"
       },
       "position": { "x": 0, "y": -0.2, "z": -1 },
       "rotation": { "yaw": 3.1415, "pitch": 0, "roll": 0 },
       "scale": { "x": 0.5, "y": 0.5, "z": 0.5 }
+    },
+    {
+      "element": {
+        "type": "item",
+        "item": "minecraft:oak_planks"
+      },
+      "position": { "x": 0, "y": 0.2, "z": -1 },
+      "rotation": { "yaw": 3.1415, "pitch": 0, "roll": 0 },
+      "scale": { "x": 0.3, "y": 0.3, "z": 0.3 }
     }
   ]
 }

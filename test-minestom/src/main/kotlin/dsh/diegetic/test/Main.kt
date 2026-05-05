@@ -36,7 +36,7 @@ fun main() {
 
     // setup diegetics
     val api = MinestomDiegeticAPI()
-    api.init()
+    api.init("./test-minestom/configs")
     DiegeticAPI.set(api)
 
     // add command manager

@@ -2,6 +2,7 @@ package dsh.diegetic.test
 
 import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.DiegeticController
+import dsh.diegetic.configurable.ConfigLoader
 import dsh.diegetic.configurable.ConfigurableDiegeticElement
 import dsh.diegetic.configurable.DiegeticElementConfig
 import dsh.diegetic.elements.DynamicParentElement
@@ -136,7 +137,7 @@ class TestCommand: Command("test") {
                 viewerController = SinglePlayerNearbyViewerController(MinestomPlayer(player), MinestomLocation(player.position), 30.0),
                 positionController = PlayerPositionController(MinestomPlayer(player), Vector3f()),
                 parentEntity = MinestomEntity(player),
-                element = ConfigurableDiegeticElement("test1", config)
+                element = ConfigurableDiegeticElement("test1", ConfigLoader.files["test1"] ?: throw IllegalStateException("Missing test1 config!"))
             )
         )
     }

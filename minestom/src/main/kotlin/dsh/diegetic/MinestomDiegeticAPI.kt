@@ -1,5 +1,6 @@
 package dsh.diegetic
 
+import dsh.diegetic.configurable.ConfigLoader
 import dsh.diegetic.interop.DPlayer
 import dsh.diegetic.interop.MinestomPlayer
 import net.minestom.server.MinecraftServer
@@ -11,7 +12,8 @@ class MinestomDiegeticAPI: DiegeticAPI {
     private val controllers = mutableListOf<DiegeticController>()
     private var nextEntityID = Int.MAX_VALUE / 2
 
-    fun init() {
+    fun init(configPath: String) {
+        ConfigLoader.init(configPath)
         MinecraftServer.getSchedulerManager().scheduleTask({
             controllers.forEach(DiegeticController::tick)
             TaskSchedule.tick(1)
