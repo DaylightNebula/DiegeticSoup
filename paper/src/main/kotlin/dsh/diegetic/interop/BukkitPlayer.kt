@@ -4,7 +4,7 @@ import org.bukkit.Bukkit
 
 class BukkitPlayer(
     val bukkitPlayer: org.bukkit.entity.Player
-): DPlayer, DEntity {
+): DPlayer(), DEntity {
     companion object {
         fun fromDPlayer(player: DPlayer): BukkitPlayer {
             if (player is BukkitPlayer) return player

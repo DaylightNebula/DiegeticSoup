@@ -2,10 +2,11 @@ package dsh.diegetic.interop
 
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
+import java.util.UUID
 
 class MinestomPlayer(
     val player: Player
-): DPlayer {
+): DPlayer() {
 
     companion object {
         fun toPlayer(player: DPlayer): Player = MinecraftServer
@@ -14,8 +15,8 @@ class MinestomPlayer(
                 ?: throw IllegalArgumentException("Player is not MinestomPlayer!")
     }
 
-    override fun uuid() = player.uuid
-    override fun name() = player.username
+    override fun uuid(): UUID = player.uuid
+    override fun name(): String = player.username
     override fun location() = MinestomLocation(player.position)
     override fun eyeHeight() = player.eyeHeight.toFloat()
 }

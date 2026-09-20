@@ -122,9 +122,9 @@ class PaperPacketAPI: PacketAPI {
         val metadataPacket = WrapperPlayServerEntityMetadata(
             entityId,
             listOf(
-                EntityData(8, EntityDataTypes.INT, 1),
-                EntityData(9, EntityDataTypes.INT, 1),
-                EntityData(10, EntityDataTypes.INT, 1),
+                EntityData(8, EntityDataTypes.INT, 0),
+                EntityData(9, EntityDataTypes.INT, 0),
+                EntityData(10, EntityDataTypes.INT, 0),
                 EntityData(11, EntityDataTypes.VECTOR3F, com.github.retrooper.packetevents.util.Vector3f(translation.x, translation.y, translation.z)),
                 EntityData(12, EntityDataTypes.VECTOR3F, com.github.retrooper.packetevents.util.Vector3f(scale.x, scale.y, scale.z)),
                 EntityData(13, EntityDataTypes.QUATERNION, Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w))

@@ -98,7 +98,6 @@ class MinestomPacketAPI: PacketAPI {
                 23 to Metadata.Component(text)
             )
         )
-
         // send to viewers
         viewers.forEach { viewer ->
             val player = MinestomPlayer.toPlayer(viewer)
@@ -121,9 +120,9 @@ class MinestomPacketAPI: PacketAPI {
         val metadataPacket = EntityMetaDataPacket(
             entityId,
             mapOf(
-                8 to Metadata.VarInt(1),
-                9 to Metadata.VarInt(1),
-                10 to Metadata.VarInt(1),
+                8 to Metadata.VarInt(0),
+                9 to Metadata.VarInt(0),
+                10 to Metadata.VarInt(0),
                 11 to Metadata.Vector3(Vec(translation.x.toDouble(), translation.y.toDouble(), translation.z.toDouble())),
                 12 to Metadata.Vector3(Vec(scale.x.toDouble(), scale.y.toDouble(), scale.z.toDouble())),
                 13 to Metadata.Quaternion(floatArrayOf(rotation.x, rotation.y, rotation.z, rotation.w)),

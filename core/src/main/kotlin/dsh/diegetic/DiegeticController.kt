@@ -25,7 +25,10 @@ class DiegeticController(
 
     fun tick() {
         // update viewers set
-        val (toAdd, toRemove, removeController) = viewerController.tick(viewers, positionController.getPosition())
+        val (toAdd, toRemove, removeController) = viewerController.tick(
+            viewers,
+            positionController.getPosition()
+        )
 
         if (removeController) {
             DiegeticAPI.get().removeController(this)
