@@ -3,9 +3,12 @@ package dsh.diegetic.test
 import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.controller.DiegeticController
 import dsh.diegetic.controller.diegetic
+import dsh.diegetic.elements.DSLElement
 import dsh.diegetic.elements.DynamicParentElement
 import dsh.diegetic.elements.StaticItemElement
 import dsh.diegetic.elements.StaticTextElement
+import dsh.diegetic.elements.element
+import dsh.diegetic.interop.DItem
 import dsh.diegetic.interop.MinestomEntity
 import dsh.diegetic.interop.MinestomItem
 import dsh.diegetic.interop.MinestomLocation
@@ -29,6 +32,7 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 
 class TestCommand: Command("test") {
@@ -161,8 +165,66 @@ class TestCommand: Command("test") {
     }
 
     fun test4(player: Player) {
-        val location = Pos(player.position.blockX().toDouble(), player.position.blockY().toDouble(), player.position.blockZ().toDouble())
-            .withPitch { 0.0 }
+        val direction = player.position.direction()
+        val location = player.position.add(0.0, player.eyeHeight, 0.0).add(direction)
 
+        diegetic {
+            viewerController = SinglePlayerNearbyViewerController(MinestomPlayer(player), MinestomLocation(location), 12.0)
+            positionController = StaticPositionController(MinestomLocation(location))
+
+            element {
+                child(rotatingElement(
+                    item = MinestomItem(ItemStack.of(Material.GRAVEL)),
+                    targetAngle = 135f,
+                    itemScale = 0.3f
+                ))
+                child(rotatingElement(
+                    item = MinestomItem(ItemStack.of(Material.DIRT)),
+                    targetAngle = 90f,
+                    itemScale = 0.3f
+                ))
+                child(rotatingElement(
+                    item = MinestomItem(ItemStack.of(Material.APPLE)),
+                    targetAngle = 45f,
+                    itemScale = 0.3f
+                ))
+                child(rotatingElement(
+                    item = MinestomItem(ItemStack.of(Material.FLINT)),
+                    targetAngle = 0f,
+                    itemScale = 0.3f
+                ))
+            }
+        }
+    }
+}
+
+fun rotatingElement(
+    item: DItem,
+    targetAngle: Float,
+    itemScale: Float = 0.5f,
+    circleScale: Float = 0.5f,
+    fanTime: Float = 500f
+): DSLElement {
+    return element {
+
+        val startTime = System.currentTimeMillis()
+
+        translate {
+            val diff = min((System.currentTimeMillis() - startTime) / fanTime, 1f)
+            val angle = diff * targetAngle
+            Vector3f(sin(angle * -0.01745277777).toFloat() * circleScale, cos(angle * 0.01745277777).toFloat() * circleScale, 0f)
+        }
+
+        draw {
+            this.item = item
+            scale = Vector3f(itemScale)
+        }
+
+        draw {
+            text = MiniMessage.miniMessage().deserialize("<red>Hello world!")
+            rotation = Quaternionf().rotateY(Math.PI.toFloat())
+            translation = Vector3f(0f, itemScale / 2f, 0f)
+            scale = Vector3f(itemScale * 1.5f)
+        }
     }
 }
