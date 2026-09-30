@@ -1,5 +1,6 @@
 package dsh.diegetic
 
+import dsh.diegetic.controller.DiegeticController
 import dsh.diegetic.elements.DynamicParentElement
 import dsh.diegetic.elements.StaticItemElement
 import dsh.diegetic.elements.StaticParentElement
@@ -112,7 +113,11 @@ class TestCommand: CommandExecutor {
 
         DiegeticAPI.get().addController(
             DiegeticController(
-                viewerController = SinglePlayerNearbyViewerController(BukkitPlayer(player), BukkitLocation(location), 30.0),
+                viewerController = SinglePlayerNearbyViewerController(
+                    BukkitPlayer(player),
+                    BukkitLocation(location),
+                    30.0
+                ),
                 positionController = PlayerPositionController(BukkitPlayer(player), Vector3f()),
                 parentEntity = BukkitEntity(player),
                 element = StaticTextElement(

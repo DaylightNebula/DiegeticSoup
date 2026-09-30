@@ -1,5 +1,6 @@
 package dsh.diegetic
 
+import dsh.diegetic.controller.DiegeticController
 import dsh.diegetic.interop.DPlayer
 
 interface DiegeticAPI {

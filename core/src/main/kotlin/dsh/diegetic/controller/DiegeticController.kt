@@ -1,5 +1,6 @@
-package dsh.diegetic
+package dsh.diegetic.controller
 
+import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.elements.DiegeticElement
 import dsh.diegetic.elements.RenderedElement
 import dsh.diegetic.interop.DEntity
