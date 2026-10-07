@@ -16,10 +16,16 @@ install_release() {
     # the release workflow may still be running when JitPack is first asked for a tag, so wait for it
     for attempt in $(seq 1 30); do
         if curl -fsSL -o /tmp/jitpack-maven-repo.zip "$asset"; then
-            mkdir -p "$HOME/.m2/repository"
-            unzip -oq /tmp/jitpack-maven-repo.zip -d "$HOME/.m2/repository" || return 1
+            local installed="$HOME/.m2/repository/${GROUP//.//}/$ARTIFACT"
+            # JitPack looks for artifacts written during the build, both in the project directory and in
+            # ~/.m2 (as a Gradle publish would leave them), so unpack into both without the zip's timestamps
+            for target in "$HOME/.m2/repository" build/jitpack-repo; do
+                mkdir -p "$target"
+                unzip -oq -DD /tmp/jitpack-maven-repo.zip -d "$target" || return 1
+            done
+            find "$installed" build/jitpack-repo -type f -exec touch {} +
             echo "== installed release artifacts from $asset:"
-            find "$HOME/.m2/repository/${GROUP//.//}/$ARTIFACT" -type f -name "*.jar"
+            find "$installed" -type f \( -name "*.jar" -o -name "*.pom" \) -exec ls -l {} +
             return 0
         fi
         echo "== release artifacts not available yet ($attempt/30): $asset"
