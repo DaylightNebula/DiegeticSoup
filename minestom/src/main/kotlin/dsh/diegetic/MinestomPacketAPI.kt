@@ -26,7 +26,8 @@ class MinestomPacketAPI: PacketAPI {
         entityId: Int,
         item: DItem,
         location: DLocation,
-        offset: Matrix4f
+        offset: Matrix4f,
+        teleportDuration: Int
     ) {
         // create spawn packet
         val spawnPacket = SpawnEntityPacket(
@@ -46,9 +47,9 @@ class MinestomPacketAPI: PacketAPI {
         val metadataPacket = EntityMetaDataPacket(
             entityId,
             mapOf(
-                8 to Metadata.VarInt(1),
-                9 to Metadata.VarInt(1),
-                10 to Metadata.VarInt(1),
+                8 to Metadata.VarInt(0),
+                9 to Metadata.VarInt(0),
+                10 to Metadata.VarInt(teleportDuration),
                 11 to Metadata.Vector3(Vec(translation.x.toDouble(), translation.y.toDouble(), translation.z.toDouble())),
                 12 to Metadata.Vector3(Vec(scale.x.toDouble(), scale.y.toDouble(), scale.z.toDouble())),
                 13 to Metadata.Quaternion(floatArrayOf(rotation.x, rotation.y, rotation.z, rotation.w)),
@@ -69,7 +70,8 @@ class MinestomPacketAPI: PacketAPI {
         entityId: Int,
         text: Component,
         location: DLocation,
-        offset: Matrix4f
+        offset: Matrix4f,
+        teleportDuration: Int
     ) {
         // create spawn packet
         val spawnPacket = SpawnEntityPacket(
@@ -89,9 +91,9 @@ class MinestomPacketAPI: PacketAPI {
         val metadataPacket = EntityMetaDataPacket(
             entityId,
             mapOf(
-                8 to Metadata.VarInt(1),
-                9 to Metadata.VarInt(1),
-                10 to Metadata.VarInt(1),
+                8 to Metadata.VarInt(0),
+                9 to Metadata.VarInt(0),
+                10 to Metadata.VarInt(teleportDuration),
                 11 to Metadata.Vector3(Vec(translation.x.toDouble(), translation.y.toDouble(), translation.z.toDouble())),
                 12 to Metadata.Vector3(Vec(scale.x.toDouble(), scale.y.toDouble(), scale.z.toDouble())),
                 13 to Metadata.Quaternion(floatArrayOf(rotation.x, rotation.y, rotation.z, rotation.w)),
@@ -109,7 +111,8 @@ class MinestomPacketAPI: PacketAPI {
     override fun updateDisplayOffset(
         viewers: Collection<DPlayer>,
         entityId: Int,
-        offset: Matrix4f
+        offset: Matrix4f,
+        interpolationDuration: Int
     ) {
         val translation = Vector3f()
         val rotation = Quaternionf()
@@ -121,8 +124,7 @@ class MinestomPacketAPI: PacketAPI {
             entityId,
             mapOf(
                 8 to Metadata.VarInt(0),
-                9 to Metadata.VarInt(0),
-                10 to Metadata.VarInt(0),
+                9 to Metadata.VarInt(interpolationDuration),
                 11 to Metadata.Vector3(Vec(translation.x.toDouble(), translation.y.toDouble(), translation.z.toDouble())),
                 12 to Metadata.Vector3(Vec(scale.x.toDouble(), scale.y.toDouble(), scale.z.toDouble())),
                 13 to Metadata.Quaternion(floatArrayOf(rotation.x, rotation.y, rotation.z, rotation.w)),

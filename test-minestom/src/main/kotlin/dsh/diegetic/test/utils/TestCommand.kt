@@ -3,6 +3,17 @@ package dsh.diegetic.test.utils
 import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.controller.DiegeticController
 import dsh.diegetic.controller.diegetic
+import dsh.diegetic.controller.element
+import dsh.diegetic.controller.position
+import dsh.diegetic.controller.positionController
+import dsh.diegetic.controller.viewerController
+import dsh.diegetic.controller.viewers
+import dsh.diegetic.elements.draw
+import dsh.diegetic.elements.item
+import dsh.diegetic.elements.rotation
+import dsh.diegetic.elements.scale
+import dsh.diegetic.elements.text
+import dsh.diegetic.elements.translation
 import dsh.diegetic.elements.DSLElement
 import dsh.diegetic.elements.DynamicParentElement
 import dsh.diegetic.elements.StaticItemElement

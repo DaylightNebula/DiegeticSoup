@@ -5,7 +5,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.inventory.ItemStack
 
-class BukkitItem(
+data class BukkitItem(
     val bukkitItem: ItemStack
 ): DItem {
     companion object {

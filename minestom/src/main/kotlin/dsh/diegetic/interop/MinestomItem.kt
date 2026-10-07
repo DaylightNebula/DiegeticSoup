@@ -6,7 +6,7 @@ import net.minestom.server.item.Material
 import net.minestom.server.item.component.CustomModelData
 import kotlin.math.roundToInt
 
-class MinestomItem(
+data class MinestomItem(
     val item: ItemStack
 ): DItem {
     companion object {
