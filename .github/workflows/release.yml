@@ -36,6 +36,15 @@ jobs:
           ./gradlew build -Pversion="$VERSION"
           ./gradlew :test-minestom:runMinestomTests -PskipClient=true -Pversion="$VERSION"
 
+      # The same modules under JitPack's group and version (the tag), laid out as a Maven repository.
+      # JitPack installs this instead of building, since Java on its build image is unreliable; see jitpack.yml.
+      - name: Build the JitPack repository
+        run: |
+          group="com.github.${GITHUB_REPOSITORY_OWNER}.${GITHUB_REPOSITORY#*/}"
+          ./gradlew publishToMavenLocal -Pdiegetic.group="$group" -Pversion="$GITHUB_REF_NAME" -Dmaven.repo.local="$PWD/build/jitpack-repo"
+          (cd build/jitpack-repo && zip -qr "$GITHUB_WORKSPACE/jitpack-maven-repo.zip" .)
+          unzip -l jitpack-maven-repo.zip
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -49,4 +58,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" "${flags[@]}" \
             --title "$GITHUB_REF_NAME" \
             --generate-notes \
-            "${files[@]}"
+            "${files[@]}" \
+            jitpack-maven-repo.zip

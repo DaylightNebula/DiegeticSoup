@@ -11,7 +11,7 @@ no real entities, and the library only sends packets when something a player can
   client-side interpolation for animations and movement
 - Tested against a real Minecraft client with [NebsClient](https://github.com/DaylightNebula/NebsClient)
 
-> **Status: 0.1.0, experimental.** The API may change between minor versions. Minestom is tested end to
+> **Status: 0.1.x, experimental.** The API may change between minor versions. Minestom is tested end to
 > end; Paper compiles and shares all of the core, but hasn't been tested on a live server yet.
 
 | Module | Artifact | What it is |
@@ -35,9 +35,9 @@ repositories {
 
 // build.gradle.kts
 dependencies {
-    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-minestom:v0.1.0")
+    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-minestom:v0.1.1")
     // or, for a Paper plugin (shade it into your plugin jar):
-    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-paper:v0.1.0")
+    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-paper:v0.1.1")
 }
 ```
 
@@ -197,27 +197,31 @@ headless Linux, run the suite under `xvfb-run`. Screenshots are saved to `test-m
 
 ## Releases
 
-The version is set in `gradle.properties` (currently `0.1.0`).
+The version is set in `gradle.properties` (currently `0.1.1`).
 
 - **CI** (`.github/workflows/ci.yml`) runs on every push to `master` and every pull request. One job
   builds the project and runs the scenarios that need no client; a second runs the full suite against
   a real client under Xvfb and uploads its screenshots.
 - **Releases** (`.github/workflows/release.yml`) run when a version tag is pushed. The workflow builds and
   tests with the version taken from the tag, then creates a GitHub release with the module jars and source
-  jars attached, and notes generated from merged pull requests.
+  jars attached, notes generated from merged pull requests, and `jitpack-maven-repo.zip` for JitPack.
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 Tags must look like `v1.2.3`; a suffix such as `v1.2.3-beta.1` makes a pre-release. Bump `version` in
 `gradle.properties` afterwards so local builds don't keep the released version number.
 
-**JitPack** builds any tag or commit on demand using `jitpack.yml`, which installs JDK 25 and publishes the
-modules as `com.github.DaylightNebula.DiegeticSoup:diegetic-<module>:<tag>`. The first request for a new
-tag takes a few minutes; open the [JitPack page](https://jitpack.io/#DaylightNebula/DiegeticSoup) and press
-"Get it" to build ahead of time and see the log.
+**JitPack** serves the modules as `com.github.DaylightNebula.DiegeticSoup:diegetic-<module>:<tag>`. For a
+release tag it doesn't build anything: [`.jitpack/install.sh`](.jitpack/install.sh) downloads the
+`jitpack-maven-repo.zip` that the release workflow attached (waiting for the workflow if it is still
+running), so JitPack serves exactly the artifacts CI built and tested. This works around JitPack's build
+image currently failing to run Java ([jitpack#8096](https://github.com/jitpack/jitpack.io/issues/8096)).
+Other versions, such as commit hashes, fall back to building with Gradle, which may fail while that issue
+lasts. Once the release workflow has finished, open the [JitPack page](https://jitpack.io/#DaylightNebula/DiegeticSoup)
+and press "Get it" so the first user doesn't wait.
 
 ## License
 
