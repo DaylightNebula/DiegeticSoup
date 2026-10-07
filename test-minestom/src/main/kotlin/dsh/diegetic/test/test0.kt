@@ -3,6 +3,14 @@ package dsh.diegetic.test
 import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.MinestomDiegeticAPI
 import dsh.diegetic.controller.diegetic
+import dsh.diegetic.controller.element
+import dsh.diegetic.controller.position
+import dsh.diegetic.controller.viewers
+import dsh.diegetic.elements.draw
+import dsh.diegetic.elements.item
+import dsh.diegetic.elements.rotation
+import dsh.diegetic.elements.text
+import dsh.diegetic.elements.translation
 import dsh.diegetic.interop.MinestomItem
 import dsh.diegetic.interop.MinestomLocation
 import dsh.diegetic.interop.MinestomPlayer

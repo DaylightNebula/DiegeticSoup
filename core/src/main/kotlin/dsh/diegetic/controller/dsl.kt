@@ -1,43 +1,41 @@
 package dsh.diegetic.controller
 
-import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.elements.DSLElement
-import dsh.diegetic.elements.DiegeticElement
 import dsh.diegetic.interop.DEntity
 import dsh.diegetic.position.PositionController
 import dsh.diegetic.viewers.ViewerController
 
-class ControllerDSL {
-    var viewerController: ViewerController? = null
-    var positionController: PositionController? = null
-    var element: DiegeticElement? = null
-    var parentEntity: DEntity? = null
-    var autoSpawn: Boolean = true
+var DSLController.viewerController: ViewerController?
+    get() = currentViewerController
+    set(value) { viewerController(value ?: throw IllegalArgumentException("ViewerController cannot be null")) }
 
-    var viewers: ViewerController?
-        get() = viewerController
-        set(value) { viewerController = value }
+var DSLController.viewers: ViewerController?
+    get() = viewerController
+    set(value) { viewerController = value }
 
-    var position: PositionController?
-        get() = positionController
-        set(value) { positionController = value }
+var DSLController.positionController: PositionController?
+    get() = currentPositionController
+    set(value) { positionController(value ?: throw IllegalArgumentException("PositionController cannot be null")) }
 
-    fun element(callback: DSLElement.() -> Unit) {
-        element = DSLElement().apply(callback)
-    }
+var DSLController.position: PositionController?
+    get() = positionController
+    set(value) { positionController = value }
 
-    fun build() = DiegeticController(
-        viewerController = viewerController ?: throw IllegalStateException("ViewerController not initialized"),
-        positionController = positionController ?: throw IllegalStateException("PositionController not initialized"),
-        element = element ?: throw IllegalStateException("Element not initialized"),
-        parentEntity = parentEntity
-    )
-}
+var DSLController.parentEntity: DEntity?
+    get() = currentParentEntity
+    set(value) { parentEntity(value) }
 
-fun diegetic(callback: ControllerDSL.() -> Unit): DiegeticController {
-    val builder = ControllerDSL()
-    builder.callback()
-    val controller = builder.build()
-    if (builder.autoSpawn) DiegeticAPI.get().addController(controller)
-    return controller
+var DSLController.interpolationDuration: Int
+    get() = currentInterpolationDuration
+    set(value) { interpolationDuration(value) }
+
+var DSLController.teleportDuration: Int
+    get() = currentTeleportDuration
+    set(value) { teleportDuration(value) }
+
+fun DSLController.element(callback: DSLElement.() -> Unit): DSLController = element(DSLElement.create().apply(callback))
+
+fun diegetic(autoSpawn: Boolean = true, callback: DSLController.() -> Unit): DiegeticController {
+    val builder = DSLController.create().apply(callback)
+    return if (autoSpawn) builder.spawn() else builder.build()
 }

@@ -13,10 +13,11 @@ interface PacketAPI {
      * @param viewers   The viewers to show the entity too
      * @param entityId  The entity ID
      * @param item      The item to display
-     * @param position  The position of the entity
-     * @param scale     The scale of the entity
+     * @param location  The position of the entity
+     * @param offset    The transformation of the entity relative to its position
+     * @param teleportDuration Ticks the client takes to interpolate later position changes (0-59)
      */
-    fun spawnItemDisplay(viewers: Collection<DPlayer>, entityId: Int, item: DItem, location: DLocation, offset: Matrix4f)
+    fun spawnItemDisplay(viewers: Collection<DPlayer>, entityId: Int, item: DItem, location: DLocation, offset: Matrix4f, teleportDuration: Int)
 
     /**
      * Spawn a text display entity for the given list of viewers.
@@ -24,10 +25,11 @@ interface PacketAPI {
      * @param viewers   The viewers to show the entity too
      * @param entityId  The entity ID
      * @param text      The text to display
-     * @param position  The position of the entity
-     * @param scale     The scale of the entity
+     * @param location  The position of the entity
+     * @param offset    The transformation of the entity relative to its position
+     * @param teleportDuration Ticks the client takes to interpolate later position changes (0-59)
      */
-    fun spawnTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component, location: DLocation, offset: Matrix4f)
+    fun spawnTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component, location: DLocation, offset: Matrix4f, teleportDuration: Int)
 
     /**
      * Updates the offset of a display entity.
@@ -35,8 +37,9 @@ interface PacketAPI {
      * @param viewers   The viewers to show the entity too
      * @param entityId  The entity ID
      * @param offset    The new offset of the entity
+     * @param interpolationDuration Ticks the client takes to interpolate from the old offset to the new one
      */
-    fun updateDisplayOffset(viewers: Collection<DPlayer>, entityId: Int, offset: Matrix4f);
+    fun updateDisplayOffset(viewers: Collection<DPlayer>, entityId: Int, offset: Matrix4f, interpolationDuration: Int)
 
     /**
      * Update an item display entity for the given list of viewers with a particular item.
