@@ -17,6 +17,7 @@ import kotlin.system.exitProcess
  *  - `nebs.home`: nebs home holding the client install (default `./.nebs`)
  *  - `nebs.keepClient`: leave the client running afterwards to speed up the next run
  *  - `suite.only`: comma separated scenario names to run
+ *  - `suite.skipClient`: only run the scenarios that need no Minecraft client
  *  - `suite.screenshots`: where screenshots are copied
  */
 fun main() = startTemplateServer {
@@ -25,11 +26,13 @@ fun main() = startTemplateServer {
     val home = Path.of(System.getProperty("nebs.home", ".nebs")).toAbsolutePath()
     val keepClient = System.getProperty("nebs.keepClient").toBoolean()
     val only = System.getProperty("suite.only")?.split(',')?.map(String::trim)?.toSet()
+    val skipClient = System.getProperty("suite.skipClient").toBoolean()
     val screenshotDir = Path.of(System.getProperty("suite.screenshots", "build/test-screenshots"))
     Files.createDirectories(screenshotDir)
 
     PacketRecorder.install()
     val selected = (scenarios + packetScenarios + calibrationScenarios + flexExportScenario + flexLayoutScenarios + flexScenarios).filter { only == null || it.name in only }
+        .filter { !skipClient || !it.needsClient }
     val results = mutableListOf<Pair<String, Throwable?>>()
 
     // scenarios without a client run first, so builder bugs show up before the slow launch

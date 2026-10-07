@@ -32,4 +32,5 @@ tasks.register<JavaExec>("runMinestomTests") {
     systemProperty("suite.screenshots", layout.buildDirectory.dir("test-screenshots").get().asFile.absolutePath)
     findProperty("keepClient")?.let { systemProperty("nebs.keepClient", it.toString()) }
     findProperty("only")?.let { systemProperty("suite.only", it.toString()) }
+    findProperty("skipClient")?.let { systemProperty("suite.skipClient", it.toString()) }
 }
