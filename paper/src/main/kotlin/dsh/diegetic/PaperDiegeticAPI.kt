@@ -10,7 +10,6 @@ import java.util.LinkedList
 class PaperDiegeticAPI: DiegeticAPI {
     private val activeControllers = LinkedList<DiegeticController>()
     private val packetAPIInstance = PaperPacketAPI()
-    private var nextEntityId = 1_000_000
 
     fun init(plugin: JavaPlugin) {
         Bukkit.getScheduler().runTaskTimer(plugin, { _ ->
@@ -18,7 +17,15 @@ class PaperDiegeticAPI: DiegeticAPI {
         }, 1L, 1L)
     }
 
-    override fun nextEntityID() = nextEntityId++
+    /**
+     * Takes IDs from the server's own entity counter, so packet-only displays can never share an ID
+     * with a real entity, however long the server has been running.
+     */
+    override fun nextEntityID(): Int {
+        val world = Bukkit.getWorlds().firstOrNull()
+            ?: throw IllegalStateException("Diegetic entity IDs can only be allocated once a world has loaded")
+        return Bukkit.getUnsafe().nextEntityId(world)
+    }
     override fun getPacketAPI() = packetAPIInstance
     override fun getActiveControllers() = activeControllers
     override fun addController(controller: DiegeticController) { activeControllers.add(controller) }

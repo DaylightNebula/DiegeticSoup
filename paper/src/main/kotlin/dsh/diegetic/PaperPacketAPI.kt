@@ -9,6 +9,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity
+import dsh.diegetic.elements.TextDisplayOptions
 import dsh.diegetic.interop.BukkitItem
 import dsh.diegetic.interop.BukkitLocation
 import dsh.diegetic.interop.BukkitPlayer
@@ -47,7 +48,7 @@ class PaperPacketAPI: PacketAPI {
         val rotation = Quaternionf()
         val scale = Vector3f()
         offset.getTranslation(translation)
-        offset.getNormalizedRotation(rotation)
+        offset.getUnnormalizedRotation(rotation)
         offset.getScale(scale)
         val metadataPacket = WrapperPlayServerEntityMetadata(
             entityId,
@@ -75,7 +76,8 @@ class PaperPacketAPI: PacketAPI {
         text: Component,
         location: DLocation,
         offset: Matrix4f,
-        teleportDuration: Int
+        teleportDuration: Int,
+        options: TextDisplayOptions
     ) {
         // create spawn packet
         val spawnPacket = WrapperPlayServerSpawnEntity(
@@ -92,7 +94,7 @@ class PaperPacketAPI: PacketAPI {
         val rotation = Quaternionf()
         val scale = Vector3f()
         offset.getTranslation(translation)
-        offset.getNormalizedRotation(rotation)
+        offset.getUnnormalizedRotation(rotation)
         offset.getScale(scale)
         val metadataPacket = WrapperPlayServerEntityMetadata(
             entityId,
@@ -101,6 +103,9 @@ class PaperPacketAPI: PacketAPI {
                 EntityData(9, EntityDataTypes.INT, 0),
                 EntityData(10, EntityDataTypes.INT, teleportDuration),
                 EntityData(23, EntityDataTypes.ADV_COMPONENT, text),
+                EntityData(24, EntityDataTypes.INT, options.lineWidth),
+                EntityData(25, EntityDataTypes.INT, options.resolvedBackground),
+                EntityData(27, EntityDataTypes.BYTE, options.alignment.flags),
                 EntityData(11, EntityDataTypes.VECTOR3F, com.github.retrooper.packetevents.util.Vector3f(translation.x, translation.y, translation.z)),
                 EntityData(12, EntityDataTypes.VECTOR3F, com.github.retrooper.packetevents.util.Vector3f(scale.x, scale.y, scale.z)),
                 EntityData(13, EntityDataTypes.QUATERNION, Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w))
@@ -119,7 +124,7 @@ class PaperPacketAPI: PacketAPI {
         val rotation = Quaternionf()
         val scale = Vector3f()
         offset.getTranslation(translation)
-        offset.getNormalizedRotation(rotation)
+        offset.getUnnormalizedRotation(rotation)
         offset.getScale(scale)
         val metadataPacket = WrapperPlayServerEntityMetadata(
             entityId,
@@ -148,11 +153,14 @@ class PaperPacketAPI: PacketAPI {
         }
     }
 
-    override fun updateTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component) {
+    override fun updateTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component, options: TextDisplayOptions) {
         val metadataPacket = WrapperPlayServerEntityMetadata(
             entityId,
             listOf(
                 EntityData(23, EntityDataTypes.ADV_COMPONENT, text),
+                EntityData(24, EntityDataTypes.INT, options.lineWidth),
+                EntityData(25, EntityDataTypes.INT, options.resolvedBackground),
+                EntityData(27, EntityDataTypes.BYTE, options.alignment.flags),
             )
         )
         viewers.forEach { player ->

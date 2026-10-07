@@ -29,7 +29,7 @@ fun main() = startTemplateServer {
     Files.createDirectories(screenshotDir)
 
     PacketRecorder.install()
-    val selected = (scenarios + packetScenarios).filter { only == null || it.name in only }
+    val selected = (scenarios + packetScenarios + calibrationScenarios + flexExportScenario + flexLayoutScenarios + flexScenarios).filter { only == null || it.name in only }
     val results = mutableListOf<Pair<String, Throwable?>>()
 
     // scenarios without a client run first, so builder bugs show up before the slow launch

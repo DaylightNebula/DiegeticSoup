@@ -2,6 +2,13 @@ package dsh.diegetic.test.examples
 
 import dsh.diegetic.controller.*
 import dsh.diegetic.elements.*
+import dsh.diegetic.flex.AlignItems
+import dsh.diegetic.flex.JustifyContent
+import dsh.diegetic.flex.column
+import dsh.diegetic.flex.flex
+import dsh.diegetic.flex.row
+import dsh.diegetic.flex.item
+import dsh.diegetic.flex.text
 import dsh.diegetic.interop.MinestomEntity
 import dsh.diegetic.interop.MinestomItem
 import dsh.diegetic.interop.MinestomLocation
@@ -121,6 +128,44 @@ object KotlinExamples {
             draw {
                 text = MiniMessage.miniMessage().deserialize("<red>Riding")
                 translation = Vector3f(0f, 0.5f, 0f)
+            }
+        }
+    }
+
+    /** The same shop panel as [FlexExamples.shopPanel], written with the flex DSL. */
+    fun flexShop(viewer: Player, at: Pos) = diegetic {
+        viewers = StaticViewerController(listOf(MinestomPlayer(viewer)))
+        position = StaticPositionController(MinestomLocation(at))
+
+        val mm = MiniMessage.miniMessage()
+        flex(scale = 0.5f) {
+            width(200); padding(8); gap(6); background(0xE0101820)
+            direction(dsh.diegetic.flex.FlexDirection.COLUMN)
+
+            row {
+                justifyContent(JustifyContent.SPACE_BETWEEN); alignItems(AlignItems.CENTER)
+                text(mm.deserialize("<gold><bold>Shop"))
+                text(mm.deserialize("<gray>3 items"))
+            }
+            text(mm.deserialize("<gray>Pick an item below. This panel is laid out with flexbox and wraps its text to fit."))
+            row {
+                gap(6)
+                listOf(Material.DIAMOND to "Diamond", Material.EMERALD to "Emerald", Material.GOLD_INGOT to "Gold").forEach { (material, name) ->
+                    column {
+                        alignItems(AlignItems.CENTER); gap(3); padding(4); grow(1f); background(0x30FFFFFF)
+                        item(MinestomItem(ItemStack.of(material))) { size(24, 24) }
+                        text(mm.deserialize("<white>$name"))
+                    }
+                }
+            }
+            row {
+                gap(6)
+                listOf("Buy" to 0xC0208040, "Cancel" to 0xC0902020).forEach { (label, color) ->
+                    row {
+                        justifyContent(JustifyContent.CENTER); padding(3f, 8f); grow(1f); background(color.toInt())
+                        text(mm.deserialize("<white>$label"))
+                    }
+                }
             }
         }
     }

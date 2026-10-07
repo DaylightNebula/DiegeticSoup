@@ -1,5 +1,6 @@
 package dsh.diegetic
 
+import dsh.diegetic.elements.TextDisplayOptions
 import dsh.diegetic.interop.DItem
 import dsh.diegetic.interop.DLocation
 import dsh.diegetic.interop.DPlayer
@@ -42,7 +43,7 @@ class MinestomPacketAPI: PacketAPI {
         val rotation = Quaternionf()
         val scale = Vector3f()
         offset.getTranslation(translation)
-        offset.getNormalizedRotation(rotation)
+        offset.getUnnormalizedRotation(rotation)
         offset.getScale(scale)
         val metadataPacket = EntityMetaDataPacket(
             entityId,
@@ -71,7 +72,8 @@ class MinestomPacketAPI: PacketAPI {
         text: Component,
         location: DLocation,
         offset: Matrix4f,
-        teleportDuration: Int
+        teleportDuration: Int,
+        options: TextDisplayOptions
     ) {
         // create spawn packet
         val spawnPacket = SpawnEntityPacket(
@@ -86,7 +88,7 @@ class MinestomPacketAPI: PacketAPI {
         val rotation = Quaternionf()
         val scale = Vector3f()
         offset.getTranslation(translation)
-        offset.getNormalizedRotation(rotation)
+        offset.getUnnormalizedRotation(rotation)
         offset.getScale(scale)
         val metadataPacket = EntityMetaDataPacket(
             entityId,
@@ -97,7 +99,10 @@ class MinestomPacketAPI: PacketAPI {
                 11 to Metadata.Vector3(Vec(translation.x.toDouble(), translation.y.toDouble(), translation.z.toDouble())),
                 12 to Metadata.Vector3(Vec(scale.x.toDouble(), scale.y.toDouble(), scale.z.toDouble())),
                 13 to Metadata.Quaternion(floatArrayOf(rotation.x, rotation.y, rotation.z, rotation.w)),
-                23 to Metadata.Component(text)
+                23 to Metadata.Component(text),
+                24 to Metadata.VarInt(options.lineWidth),
+                25 to Metadata.VarInt(options.resolvedBackground),
+                27 to Metadata.Byte(options.alignment.flags)
             )
         )
         // send to viewers
@@ -118,7 +123,7 @@ class MinestomPacketAPI: PacketAPI {
         val rotation = Quaternionf()
         val scale = Vector3f()
         offset.getTranslation(translation)
-        offset.getNormalizedRotation(rotation)
+        offset.getUnnormalizedRotation(rotation)
         offset.getScale(scale)
         val metadataPacket = EntityMetaDataPacket(
             entityId,
@@ -150,12 +155,16 @@ class MinestomPacketAPI: PacketAPI {
     override fun updateTextDisplay(
         viewers: Collection<DPlayer>,
         entityId: Int,
-        text: Component
+        text: Component,
+        options: TextDisplayOptions
     ) {
         val metadataPacket = EntityMetaDataPacket(
             entityId,
             mapOf(
-                23 to Metadata.Component(text)
+                23 to Metadata.Component(text),
+                24 to Metadata.VarInt(options.lineWidth),
+                25 to Metadata.VarInt(options.resolvedBackground),
+                27 to Metadata.Byte(options.alignment.flags)
             )
         )
         viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(metadataPacket) }
