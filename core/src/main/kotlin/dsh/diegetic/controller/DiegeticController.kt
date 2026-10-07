@@ -140,8 +140,9 @@ class DiegeticController(
         when {
             current is RenderedElement.Item && previous is RenderedElement.Item && current.item != previous.item ->
                 packets.updateItemDisplay(viewers, current.entityId, current.item)
-            current is RenderedElement.Text && previous is RenderedElement.Text && current.text != previous.text ->
-                packets.updateTextDisplay(viewers, current.entityId, current.text)
+            current is RenderedElement.Text && previous is RenderedElement.Text &&
+                (current.text != previous.text || current.options != previous.options) ->
+                packets.updateTextDisplay(viewers, current.entityId, current.text, current.options)
         }
 
         if (moved) packets.moveEntity(viewers, current.entityId, rootPosition)
@@ -154,7 +155,7 @@ class DiegeticController(
             is RenderedElement.Item ->
                 packets.spawnItemDisplay(targets, element.entityId, element.item, rootPosition, element.offset, teleportDuration)
             is RenderedElement.Text ->
-                packets.spawnTextDisplay(targets, element.entityId, element.text, rootPosition, element.offset, teleportDuration)
+                packets.spawnTextDisplay(targets, element.entityId, element.text, rootPosition, element.offset, teleportDuration, element.options)
         }
     }
 }

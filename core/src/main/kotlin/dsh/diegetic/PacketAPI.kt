@@ -1,5 +1,6 @@
 package dsh.diegetic
 
+import dsh.diegetic.elements.TextDisplayOptions
 import dsh.diegetic.interop.DItem
 import dsh.diegetic.interop.DLocation
 import dsh.diegetic.interop.DPlayer
@@ -28,8 +29,9 @@ interface PacketAPI {
      * @param location  The position of the entity
      * @param offset    The transformation of the entity relative to its position
      * @param teleportDuration Ticks the client takes to interpolate later position changes (0-59)
+     * @param options   Line width and background of the text display
      */
-    fun spawnTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component, location: DLocation, offset: Matrix4f, teleportDuration: Int)
+    fun spawnTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component, location: DLocation, offset: Matrix4f, teleportDuration: Int, options: TextDisplayOptions)
 
     /**
      * Updates the offset of a display entity.
@@ -56,8 +58,9 @@ interface PacketAPI {
      * @param viewers   The viewers to show the entity too
      * @param entityId  The entity ID
      * @param text      The text to display
+     * @param options   Line width and background of the text display
      */
-    fun updateTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component)
+    fun updateTextDisplay(viewers: Collection<DPlayer>, entityId: Int, text: Component, options: TextDisplayOptions)
 
     /**
      * Move an entity to a new position for the given list of viewers.
