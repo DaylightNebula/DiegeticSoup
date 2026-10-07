@@ -1,4 +1,4 @@
-package dsh.diegetic.test
+package dsh.diegetic.test.utils
 
 import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.controller.DiegeticController
