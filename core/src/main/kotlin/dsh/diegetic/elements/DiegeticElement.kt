@@ -1,5 +1,9 @@
 package dsh.diegetic.elements
 
+import dsh.diegetic.interaction.Hit
+import dsh.diegetic.interaction.Interactive
+import dsh.diegetic.interaction.Ray
+import dsh.diegetic.interaction.RenderContext
 import dsh.diegetic.interop.DItem
 import net.kyori.adventure.text.Component
 import org.joml.Matrix4f
@@ -7,6 +11,18 @@ import java.util.LinkedList
 
 interface DiegeticElement {
     fun render(output: LinkedList<RenderedElement>, parent: Matrix4f)
+
+    /**
+     * Renders for a particular viewer or group of viewers. Elements with hover effects or other
+     * per-viewer visuals override this; the default ignores the context.
+     */
+    fun render(output: LinkedList<RenderedElement>, parent: Matrix4f, context: RenderContext) = render(output, parent)
+
+    /**
+     * Finds the nearest interactive target hit by [ray], given in the same space [parent] maps this
+     * element into. Elements without interactive parts return null.
+     */
+    fun hitTest(ray: Ray, parent: Matrix4f): Hit? = null
 }
 
 sealed class RenderedElement {
@@ -19,6 +35,17 @@ sealed class RenderedElement {
         val text: Component,
         override val offset: Matrix4f,
         val options: TextDisplayOptions = TextDisplayOptions()
+    ): RenderedElement()
+
+    /**
+     * An invisible interaction entity that lets players click [target]. [offset] maps the unit square
+     * (-0.5..0.5 on x and y) onto the clickable rectangle; the controller places an axis-aligned hitbox
+     * around it in the world.
+     */
+    data class Interaction(
+        override val entityId: Int,
+        override val offset: Matrix4f,
+        val target: Interactive
     ): RenderedElement()
 }
 

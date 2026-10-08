@@ -103,4 +103,25 @@ interface PacketAPI {
      * @param parentId  The new parent ID
      */
     fun setEntityPassengers(viewers: Collection<DPlayer>, parentId: Int, entityIds: Collection<Int>)
+
+    /**
+     * Spawn an invisible interaction entity, whose hitbox lets players click a UI.
+     *
+     * @param viewers   The viewers to show the entity to
+     * @param entityId  The entity ID
+     * @param location  The bottom centre of the hitbox
+     * @param width     Width of the hitbox on both horizontal axes, in blocks
+     * @param height    Height of the hitbox, in blocks
+     */
+    fun spawnInteraction(viewers: Collection<DPlayer>, entityId: Int, location: DLocation, width: Float, height: Float)
+
+    /**
+     * Resize an interaction entity's hitbox.
+     *
+     * @param viewers   The viewers to show the entity to
+     * @param entityId  The entity ID
+     * @param width     Width of the hitbox on both horizontal axes, in blocks
+     * @param height    Height of the hitbox, in blocks
+     */
+    fun updateInteractionSize(viewers: Collection<DPlayer>, entityId: Int, width: Float, height: Float)
 }

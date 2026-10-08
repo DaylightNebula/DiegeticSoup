@@ -6,6 +6,8 @@ no real entities, and the library only sends packets when something a player can
 
 - **Java builders and a Kotlin DSL** for the same API
 - **Flexbox layout**: text, items and containers laid out like CSS flexbox, with wrapping text and backgrounds
+- **Interaction**: buttons, toggles, radio groups and tabs, and sliders, with left and right clicks and
+  per-viewer or shared hover highlights
 - **Controllers** that decide who sees a UI and where it is: fixed, following a player, riding an entity
 - **Efficient updates**: per-entity diffing, so a static UI sends nothing after it spawns, and smooth
   client-side interpolation for animations and movement
@@ -165,6 +167,63 @@ The panel faces +z and is centred on the element's origin by default (`anchor`).
 so changing a node's text or style reflows the panel, and only the entities that move or change are
 updated. Not supported yet: `margin: auto`, `order`, baseline alignment, `aspect-ratio` and percentage
 padding.
+
+## Interaction
+
+Flex layouts can contain clickable widgets:
+
+| Widget | What it does |
+|--------|--------------|
+| `FlexButton` | A box with `onClick`, `onLeftClick` and `onRightClick` handlers. |
+| `FlexToggle` | A checkbox with a label; clicking flips it and calls `onChange(event, checked)`. |
+| `FlexRadioGroup` | One choice out of several, drawn as dots (`RadioStyle.DOTS`) or tabs (`RadioStyle.TABS`); calls `onChange(event, value)`. |
+| `FlexSlider` | A horizontal slider with `range`, `step` and `onChange(event, value)`. Click the track to set it, or hold right click and move along it to drag. |
+
+Every widget is a flex node, so it is laid out like any other. Buttons, toggles and radio options are
+containers, so they can hold any content. All of them support `hoverBackground`, `disabled` and
+`disabledBackground`. Handlers get a `ClickEvent` with the player, `type` (`LEFT` or `RIGHT`), the
+controller, and where on the widget they clicked.
+
+```kotlin
+flex(scale = 0.5f) {
+    direction(FlexDirection.COLUMN); padding(8); gap(6); background(0xE0101820)
+
+    radioGroup("audio", RadioStyle.TABS, onChange = { event, tab -> showTab(event.player, tab) }) {
+        option("audio", "Audio"); option("video", "Video")
+    }
+    val volume = text("Volume: 70")
+    slider(0f, 100f, 70f, onChange = { _, value -> volume.text("Volume: ${value.toInt()}") }) { step(5f) }
+    toggle(checked = true) { text("Subtitles") }
+    button("Save") { event -> if (event.isLeft) save(event.player) }
+}
+```
+
+```java
+FlexContainer.column().padding(8).gap(6)
+    .child(FlexSlider.create(0f, 100f, 70f).step(5f).onChange((event, value) -> setVolume(value)))
+    .child(FlexToggle.create("Subtitles").checked(true).onChange((event, on) -> setSubtitles(on)))
+    .child(FlexButton.create("Save", event -> save(event.getPlayer())));
+```
+
+How it works and what to know:
+
+- **Clicking:** each enabled widget gets an invisible interaction entity, so the client has something to
+  click. The server then casts the player's view against the panel to find exactly which widget was
+  clicked, so this works for panels at any yaw and pitch.
+- **Reach:** players can only hover and click within their own entity reach: the `entity_interaction_range`
+  attribute, 3 blocks by default. On Paper, creative mode adds 2 blocks as vanilla does; Minestom doesn't
+  add that bonus, so set the attribute if creative players should reach further. Hover and clicks use the same rule,
+  so anything highlighted can be clicked. Clicks from beyond reach are rejected on the server, so a
+  modified client can't click from afar. `interactionRange(blocks)` on the controller can lower it further.
+- **Hover:** with `hoverMode(HoverMode.PER_VIEWER)` (the default), each player only sees highlights for what
+  they themselves are looking at. With `HoverMode.SHARED`, everyone sees what anyone is looking at.
+- **Shared state:** widget state (checked, selected, value) is shared by everyone viewing a UI. For separate
+  state per player, give each player their own controller.
+- **Not supported yet:** clicks on UIs that ride an entity (`parentEntity`). Paper's input handling compiles
+  but hasn't been tested on a live server yet.
+
+Your own elements can be clickable too: implement `Interactive` and emit a `RenderedElement.Interaction`
+for it, and override `DiegeticElement.hitTest` so the controller can find it under the player's view.
 
 ## Interpolation
 

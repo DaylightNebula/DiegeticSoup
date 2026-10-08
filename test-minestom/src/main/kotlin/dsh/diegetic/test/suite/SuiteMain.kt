@@ -31,7 +31,7 @@ fun main() = startTemplateServer {
     Files.createDirectories(screenshotDir)
 
     PacketRecorder.install()
-    val selected = (scenarios + packetScenarios + calibrationScenarios + flexExportScenario + flexLayoutScenarios + flexScenarios).filter { only == null || it.name in only }
+    val selected = (scenarios + packetScenarios + calibrationScenarios + flexExportScenario + flexLayoutScenarios + flexScenarios + interactionScenarios).filter { only == null || it.name in only }
         .filter { !skipClient || !it.needsClient }
     val results = mutableListOf<Pair<String, Throwable?>>()
 

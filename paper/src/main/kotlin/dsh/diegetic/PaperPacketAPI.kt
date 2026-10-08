@@ -211,4 +211,40 @@ class PaperPacketAPI: PacketAPI {
             PacketEvents.getAPI().playerManager.sendPacket(BukkitPlayer.fromDPlayer(player).bukkitPlayer, packet)
         }
     }
+
+    override fun spawnInteraction(viewers: Collection<DPlayer>, entityId: Int, location: DLocation, width: Float, height: Float) {
+        val spawnPacket = WrapperPlayServerSpawnEntity(
+            entityId, UUID.randomUUID(),
+            SpigotConversionUtil.fromBukkitEntityType(EntityType.INTERACTION),
+            SpigotConversionUtil.fromBukkitLocation(BukkitLocation.fromDLocation(location).bukkitLocation),
+            0f,
+            0,
+            null
+        )
+        val metadataPacket = WrapperPlayServerEntityMetadata(
+            entityId,
+            listOf(
+                EntityData(8, EntityDataTypes.FLOAT, width),
+                EntityData(9, EntityDataTypes.FLOAT, height),
+                EntityData(10, EntityDataTypes.BOOLEAN, true)
+            )
+        )
+        viewers.forEach { player ->
+            PacketEvents.getAPI().playerManager.sendPacket(BukkitPlayer.fromDPlayer(player).bukkitPlayer, spawnPacket)
+            PacketEvents.getAPI().playerManager.sendPacket(BukkitPlayer.fromDPlayer(player).bukkitPlayer, metadataPacket)
+        }
+    }
+
+    override fun updateInteractionSize(viewers: Collection<DPlayer>, entityId: Int, width: Float, height: Float) {
+        val metadataPacket = WrapperPlayServerEntityMetadata(
+            entityId,
+            listOf(
+                EntityData(8, EntityDataTypes.FLOAT, width),
+                EntityData(9, EntityDataTypes.FLOAT, height)
+            )
+        )
+        viewers.forEach { player ->
+            PacketEvents.getAPI().playerManager.sendPacket(BukkitPlayer.fromDPlayer(player).bukkitPlayer, metadataPacket)
+        }
+    }
 }

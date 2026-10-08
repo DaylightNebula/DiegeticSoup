@@ -8,7 +8,9 @@ import dsh.diegetic.interop.MinestomItem
 import dsh.diegetic.interop.MinestomLocation
 import dsh.diegetic.interop.MinestomPlayer
 import net.kyori.adventure.text.Component
+import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.Player
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Metadata
 import net.minestom.server.network.packet.server.play.DestroyEntitiesPacket
@@ -22,6 +24,10 @@ import org.joml.Vector3f
 import java.util.UUID
 
 class MinestomPacketAPI: PacketAPI {
+    /** The viewer's player, or null once they have left: packets to departed viewers are dropped. */
+    private fun online(viewer: DPlayer): Player? =
+        MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(viewer.uuid())
+
     override fun spawnItemDisplay(
         viewers: Collection<DPlayer>,
         entityId: Int,
@@ -60,7 +66,7 @@ class MinestomPacketAPI: PacketAPI {
 
         // send to viewers
         viewers.forEach { viewer ->
-            val player = MinestomPlayer.toPlayer(viewer)
+            val player = online(viewer) ?: return@forEach
             player.sendPacket(spawnPacket)
             player.sendPacket(metadataPacket)
         }
@@ -107,7 +113,7 @@ class MinestomPacketAPI: PacketAPI {
         )
         // send to viewers
         viewers.forEach { viewer ->
-            val player = MinestomPlayer.toPlayer(viewer)
+            val player = online(viewer) ?: return@forEach
             player.sendPacket(spawnPacket)
             player.sendPacket(metadataPacket)
         }
@@ -135,7 +141,7 @@ class MinestomPacketAPI: PacketAPI {
                 13 to Metadata.Quaternion(floatArrayOf(rotation.x, rotation.y, rotation.z, rotation.w)),
             )
         )
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(metadataPacket) }
+        viewers.forEach { online(it)?.sendPacket(metadataPacket) }
     }
 
     override fun updateItemDisplay(
@@ -149,7 +155,7 @@ class MinestomPacketAPI: PacketAPI {
                 23 to Metadata.ItemStack(MinestomItem.toItem(item))
             )
         )
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(metadataPacket) }
+        viewers.forEach { online(it)?.sendPacket(metadataPacket) }
     }
 
     override fun updateTextDisplay(
@@ -167,7 +173,7 @@ class MinestomPacketAPI: PacketAPI {
                 27 to Metadata.Byte(options.alignment.flags)
             )
         )
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(metadataPacket) }
+        viewers.forEach { online(it)?.sendPacket(metadataPacket) }
     }
 
     override fun moveEntity(
@@ -181,7 +187,7 @@ class MinestomPacketAPI: PacketAPI {
             Vec(0.0, 0.0, 0.0),
             0, false
         )
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(teleport) }
+        viewers.forEach { online(it)?.sendPacket(teleport) }
     }
 
     override fun scaleEntity(
@@ -195,7 +201,7 @@ class MinestomPacketAPI: PacketAPI {
                 12 to Metadata.Vector3(Vec(scale.toDouble(), scale.toDouble(), scale.toDouble())),
             )
         )
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(metadataPacket) }
+        viewers.forEach { online(it)?.sendPacket(metadataPacket) }
     }
 
     override fun removeEntity(
@@ -203,7 +209,7 @@ class MinestomPacketAPI: PacketAPI {
         entityId: Int
     ) {
         val removePacket = DestroyEntitiesPacket(entityId)
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(removePacket) }
+        viewers.forEach { online(it)?.sendPacket(removePacket) }
     }
 
     override fun removeEntities(
@@ -211,7 +217,7 @@ class MinestomPacketAPI: PacketAPI {
         entityIds: Collection<Int>
     ) {
         val removePacket = DestroyEntitiesPacket(entityIds.toList())
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(removePacket) }
+        viewers.forEach { online(it)?.sendPacket(removePacket) }
     }
 
     override fun setEntityPassengers(
@@ -220,6 +226,50 @@ class MinestomPacketAPI: PacketAPI {
         entityIds: Collection<Int>
     ) {
         val packet = SetPassengersPacket(parentId, entityIds.toList())
-        viewers.forEach { MinestomPlayer.toPlayer(it).sendPacket(packet) }
+        viewers.forEach { online(it)?.sendPacket(packet) }
+    }
+
+    override fun spawnInteraction(
+        viewers: Collection<DPlayer>,
+        entityId: Int,
+        location: DLocation,
+        width: Float,
+        height: Float
+    ) {
+        val spawnPacket = SpawnEntityPacket(
+            entityId, UUID.randomUUID(),
+            EntityType.INTERACTION,
+            MinestomLocation.toPos(location),
+            0f, 0, Vec(0.0, 0.0, 0.0)
+        )
+        val metadataPacket = EntityMetaDataPacket(
+            entityId,
+            mapOf(
+                8 to Metadata.Float(width),
+                9 to Metadata.Float(height),
+                10 to Metadata.Boolean(true)
+            )
+        )
+        viewers.forEach { viewer ->
+            val player = online(viewer) ?: return@forEach
+            player.sendPacket(spawnPacket)
+            player.sendPacket(metadataPacket)
+        }
+    }
+
+    override fun updateInteractionSize(
+        viewers: Collection<DPlayer>,
+        entityId: Int,
+        width: Float,
+        height: Float
+    ) {
+        val metadataPacket = EntityMetaDataPacket(
+            entityId,
+            mapOf(
+                8 to Metadata.Float(width),
+                9 to Metadata.Float(height)
+            )
+        )
+        viewers.forEach { online(it)?.sendPacket(metadataPacket) }
     }
 }

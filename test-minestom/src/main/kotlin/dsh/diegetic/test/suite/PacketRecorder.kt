@@ -2,6 +2,7 @@ package dsh.diegetic.test.suite
 
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Metadata
+import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerPacketOutEvent
 import net.minestom.server.network.packet.server.ServerPacket
 import net.minestom.server.network.packet.server.play.DestroyEntitiesPacket
@@ -21,7 +22,7 @@ object PacketRecorder {
 
     enum class Kind { SPAWN, METADATA, TELEPORT, DESTROY, PASSENGERS }
 
-    data class Record(val kind: Kind, val entityIds: List<Int>, val packet: ServerPacket) {
+    data class Record(val kind: Kind, val entityIds: List<Int>, val packet: ServerPacket, val player: Player) {
         /** Value of a metadata entry, for METADATA records. */
         fun metadata(index: Int): Any? = ((packet as EntityMetaDataPacket).entries()[index] as Metadata.Entry<*>?)?.value()
         fun hasMetadata(index: Int) = (packet as EntityMetaDataPacket).entries().containsKey(index)
@@ -34,11 +35,11 @@ object PacketRecorder {
         if (installed) return
         installed = true
         MinecraftServer.getGlobalEventHandler().addListener(PlayerPacketOutEvent::class.java) { event ->
-            classify(event.packet)?.let(records::add)
+            classify(event.packet, event.player)?.let(records::add)
         }
     }
 
-    private fun classify(packet: ServerPacket): Record? {
+    private fun classify(packet: ServerPacket, player: Player): Record? {
         val (kind, ids) = when (packet) {
             is SpawnEntityPacket -> Kind.SPAWN to listOf(packet.entityId())
             is EntityMetaDataPacket -> Kind.METADATA to listOf(packet.entityId())
@@ -49,7 +50,7 @@ object PacketRecorder {
         }
         val displayIds = ids.filter { it >= FIRST_DISPLAY_ID }
         if (displayIds.isEmpty()) return null
-        return Record(kind, displayIds, packet)
+        return Record(kind, displayIds, packet, player)
     }
 
     fun clear() = records.clear()

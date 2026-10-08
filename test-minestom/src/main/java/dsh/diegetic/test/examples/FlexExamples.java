@@ -2,11 +2,17 @@ package dsh.diegetic.test.examples;
 
 import dsh.diegetic.controller.DSLController;
 import dsh.diegetic.flex.AlignItems;
+import dsh.diegetic.flex.FlexButton;
+import dsh.diegetic.flex.FlexRadioGroup;
+import dsh.diegetic.flex.FlexSlider;
+import dsh.diegetic.flex.FlexToggle;
+import dsh.diegetic.flex.RadioStyle;
 import dsh.diegetic.flex.FlexContainer;
 import dsh.diegetic.flex.FlexElement;
 import dsh.diegetic.flex.FlexItem;
 import dsh.diegetic.flex.FlexText;
 import dsh.diegetic.flex.JustifyContent;
+import dsh.diegetic.flex.Length;
 import dsh.diegetic.interop.MinestomItem;
 import dsh.diegetic.interop.MinestomLocation;
 import dsh.diegetic.interop.MinestomPlayer;
@@ -81,5 +87,49 @@ public final class FlexExamples {
             .viewerController(new StaticViewerController(List.of(new MinestomPlayer(viewer))))
             .positionController(new StaticPositionController(new MinestomLocation(at)))
             .element(FlexElement.create(shopPanel()).scale(0.5f));
+    }
+
+    /**
+     * A settings panel with every interactive widget. Widget state is shared by everyone viewing it;
+     * the handlers receive the player who clicked.
+     */
+    public static FlexContainer settingsPanel() {
+        FlexText volumeLabel = FlexText.create(mm("<gray>Volume: 70"));
+
+        return FlexContainer.column()
+            .width(180)
+            .padding(8)
+            .gap(6)
+            .background(0xE0101820)
+            .child(FlexRadioGroup.<String>create()
+                .style(RadioStyle.TABS)
+                .option("audio", "Audio")
+                .option("video", "Video")
+                .option("controls", "Controls")
+                .selected("audio")
+                .onChange((event, tab) -> event.getPlayer().name()))
+            .child(volumeLabel)
+            .child(FlexSlider.create(0f, 100f, 70f)
+                .step(5f)
+                .width(Length.percent(100f))
+                .onChange((event, value) -> volumeLabel.text(mm("<gray>Volume: " + Math.round(value)))))
+            .child(FlexToggle.create(mm("<white>Subtitles")).checked(true))
+            .child(FlexRadioGroup.<String>create()
+                .option("low", "Low quality")
+                .option("high", "High quality")
+                .selected("high"))
+            .child(FlexContainer.row()
+                .gap(6)
+                .child(FlexButton.create(mm("<white>Save")).grow(1f).background(0xC0208040).hoverBackground(0xE030A050))
+                .child(FlexButton.create(mm("<white>Reset")).grow(1f)
+                    .onLeftClick(event -> System.out.println(event.getPlayer().name() + " reset the settings"))));
+    }
+
+    /** The settings panel shown to [viewer] at [at], half size. */
+    public static DSLController settings(Player viewer, Pos at) {
+        return DSLController.create()
+            .viewerController(new StaticViewerController(List.of(new MinestomPlayer(viewer))))
+            .positionController(new StaticPositionController(new MinestomLocation(at)))
+            .element(FlexElement.create(settingsPanel()).scale(0.5f));
     }
 }

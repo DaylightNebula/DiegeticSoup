@@ -4,6 +4,13 @@ import dsh.diegetic.controller.*
 import dsh.diegetic.elements.*
 import dsh.diegetic.flex.AlignItems
 import dsh.diegetic.flex.JustifyContent
+import dsh.diegetic.flex.Length
+import dsh.diegetic.flex.RadioStyle
+import dsh.diegetic.flex.button
+import dsh.diegetic.flex.option
+import dsh.diegetic.flex.radioGroup
+import dsh.diegetic.flex.slider
+import dsh.diegetic.flex.toggle
 import dsh.diegetic.flex.column
 import dsh.diegetic.flex.flex
 import dsh.diegetic.flex.row
@@ -166,6 +173,38 @@ object KotlinExamples {
                         text(mm.deserialize("<white>$label"))
                     }
                 }
+            }
+        }
+    }
+
+    /** The settings panel from [FlexExamples.settingsPanel], written with the flex DSL. */
+    fun flexSettings(viewer: Player, at: Pos) = diegetic {
+        viewers = StaticViewerController(listOf(MinestomPlayer(viewer)))
+        position = StaticPositionController(MinestomLocation(at))
+
+        val mm = MiniMessage.miniMessage()
+        flex(scale = 0.5f) {
+            direction(dsh.diegetic.flex.FlexDirection.COLUMN); width(180); padding(8); gap(6); background(0xE0101820)
+
+            radioGroup("audio", RadioStyle.TABS, onChange = { event, tab -> println("${event.player.name()} opened $tab") }) {
+                option("audio", "Audio"); option("video", "Video"); option("controls", "Controls")
+            }
+            val volume = text(mm.deserialize("<gray>Volume: 70"))
+            slider(0f, 100f, 70f, onChange = { _, value -> volume.text(mm.deserialize("<gray>Volume: ${value.toInt()}")) }) {
+                step(5f); width(Length.percent(100f))
+            }
+            toggle(checked = true) { text(mm.deserialize("<white>Subtitles")) }
+            radioGroup("high") {
+                option("low") { text("Low quality") }
+                option("high") { text("High quality") }
+            }
+            row {
+                gap(6)
+                button(onClick = { event -> println("${event.player.name()} saved (${event.type})") }) {
+                    grow(1f); background(0xC0208040); hoverBackground(0xE030A050)
+                    text(mm.deserialize("<white>Save"))
+                }
+                button("Reset") { event -> if (event.isLeft) println("${event.player.name()} reset the settings") }.grow(1f)
             }
         }
     }

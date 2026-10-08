@@ -1,6 +1,7 @@
 package dsh.diegetic.controller
 
 import dsh.diegetic.elements.DSLElement
+import dsh.diegetic.interaction.HoverMode
 import dsh.diegetic.interop.DEntity
 import dsh.diegetic.position.PositionController
 import dsh.diegetic.viewers.ViewerController
@@ -32,6 +33,14 @@ var DSLController.interpolationDuration: Int
 var DSLController.teleportDuration: Int
     get() = currentTeleportDuration
     set(value) { teleportDuration(value) }
+
+var DSLController.hoverMode: HoverMode
+    get() = currentHoverMode
+    set(value) { hoverMode(value) }
+
+var DSLController.interactionRange: Float
+    get() = currentInteractionRange
+    set(value) { interactionRange(value) }
 
 fun DSLController.element(callback: DSLElement.() -> Unit): DSLController = element(DSLElement.create().apply(callback))
 

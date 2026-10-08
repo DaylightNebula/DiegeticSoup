@@ -2,6 +2,9 @@ package dsh.diegetic.elements
 
 import dsh.diegetic.DiegeticAPI
 import dsh.diegetic.DiegeticDsl
+import dsh.diegetic.interaction.Hit
+import dsh.diegetic.interaction.Ray
+import dsh.diegetic.interaction.RenderContext
 import dsh.diegetic.interop.DItem
 import net.kyori.adventure.text.Component
 import org.joml.Matrix4f
@@ -40,7 +43,10 @@ class DSLElement: DiegeticElement {
             .rotate(rotationFn.get())
             .scale(scaleFn.get())
 
-    override fun render(output: LinkedList<RenderedElement>, parent: Matrix4f) {
+    override fun render(output: LinkedList<RenderedElement>, parent: Matrix4f) =
+        render(output, parent, RenderContext.NONE)
+
+    override fun render(output: LinkedList<RenderedElement>, parent: Matrix4f, context: RenderContext) {
         val parentTransform = Matrix4f(parent).mul(transform)
 
         output.addAll(
@@ -67,7 +73,12 @@ class DSLElement: DiegeticElement {
             }
         )
 
-        children.forEach { it.render(output, Matrix4f(parentTransform)) }
+        children.forEach { it.render(output, Matrix4f(parentTransform), context) }
+    }
+
+    override fun hitTest(ray: Ray, parent: Matrix4f): Hit? {
+        val parentTransform = Matrix4f(parent).mul(transform)
+        return children.mapNotNull { it.hitTest(ray, parentTransform) }.minByOrNull { it.distance }
     }
 
     fun draw(element: DSLRenderedElement): DSLElement = apply { rendered.add(element) }

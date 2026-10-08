@@ -34,7 +34,7 @@ class FlexLayout private constructor() {
 
     private fun place(node: FlexNode<*>, x: Float, y: Float, width: Float, height: Float) {
         out[node] = Box(x, y, width, height)
-        if (node is FlexContainer) layoutContainer(node, width, height, x, y, record = true)
+        if (node is FlexBox<*>) layoutContainer(node, width, height, x, y, record = true)
     }
 
     // ---- intrinsic sizes (border boxes) ----
@@ -57,7 +57,8 @@ class FlexLayout private constructor() {
         val content = when (node) {
             is FlexText -> MinecraftFont.boxWidth(MinecraftFont.measure(node.text))
             is FlexItem -> FlexItem.DEFAULT_SIZE
-            is FlexContainer -> node.style.padding.horizontal + combineChildWidths(node, ::maxContentWidth, minContent = false)
+            is FlexSlider -> FlexSlider.DEFAULT_WIDTH
+            is FlexBox<*> -> node.style.padding.horizontal + combineChildWidths(node, ::maxContentWidth, minContent = false)
         }
         return clampWidth(node, content, null)
     }
@@ -72,12 +73,13 @@ class FlexLayout private constructor() {
         val content = when (node) {
             is FlexText -> MinecraftFont.minContentWidth(node.text) + MinecraftFont.BACKGROUND_PADDING
             is FlexItem -> FlexItem.DEFAULT_SIZE
-            is FlexContainer -> node.style.padding.horizontal + combineChildWidths(node, { minContentWidth(it) }, minContent = true)
+            is FlexSlider -> FlexSlider.MIN_WIDTH
+            is FlexBox<*> -> node.style.padding.horizontal + combineChildWidths(node, { minContentWidth(it) }, minContent = true)
         }
         return clampWidth(node, content, null)
     }
 
-    private fun combineChildWidths(node: FlexContainer, measure: (FlexNode<*>) -> Float, minContent: Boolean): Float {
+    private fun combineChildWidths(node: FlexBox<*>, measure: (FlexNode<*>) -> Float, minContent: Boolean): Float {
         val widths = node.children.map { measure(it) + it.style.margin.horizontal }
         if (widths.isEmpty()) return 0f
         val fixedHeight = node.style.height.resolve(null)
@@ -89,7 +91,7 @@ class FlexLayout private constructor() {
     }
 
     /** Width of a wrapping column container: its children broken into columns that fit [innerHeight]. */
-    private fun wrappedColumnsWidth(node: FlexContainer, widths: List<Float>, innerHeight: Float): Float {
+    private fun wrappedColumnsWidth(node: FlexBox<*>, widths: List<Float>, innerHeight: Float): Float {
         val columns = mutableListOf<Float>()
         var columnWidth = 0f
         var used = 0f
@@ -112,7 +114,8 @@ class FlexLayout private constructor() {
         when (node) {
             is FlexText -> MinecraftFont.measure(node.text, width - MinecraftFont.BACKGROUND_PADDING).height
             is FlexItem -> FlexItem.DEFAULT_SIZE
-            is FlexContainer -> layoutContainer(node, width, null, 0f, 0f, record = false)
+            is FlexSlider -> FlexSlider.DEFAULT_HEIGHT
+            is FlexBox<*> -> layoutContainer(node, width, null, 0f, 0f, record = false)
         }
     }
 
@@ -160,7 +163,7 @@ class FlexLayout private constructor() {
         var crossPos = 0f
     }
 
-    private fun resolveAlign(item: FlexNode<*>, container: FlexContainer): AlignItems = when (item.style.alignSelf) {
+    private fun resolveAlign(item: FlexNode<*>, container: FlexBox<*>): AlignItems = when (item.style.alignSelf) {
         AlignSelf.AUTO -> container.style.alignItems
         AlignSelf.STRETCH -> AlignItems.STRETCH
         AlignSelf.FLEX_START -> AlignItems.FLEX_START
@@ -174,7 +177,7 @@ class FlexLayout private constructor() {
      * are placed at absolute positions offset by ([originX], [originY]).
      */
     private fun layoutContainer(
-        container: FlexContainer,
+        container: FlexBox<*>,
         outerWidth: Float,
         outerHeight: Float?,
         originX: Float,

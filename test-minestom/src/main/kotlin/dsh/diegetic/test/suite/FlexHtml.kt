@@ -49,7 +49,7 @@ object FlexHtml {
     private fun node(node: FlexNode<*>, case: String, counter: IntArray): String {
         val id = "$case:${counter[0]++}"
         return when (node) {
-            is FlexContainer -> "<div data-node=\"$id\" style=\"${css(node)}\">" +
+            is FlexBox<*> -> "<div data-node=\"$id\" style=\"${css(node)}\">" +
                 node.children.joinToString("") { node(it, case, counter) } + "</div>"
             // an item's natural size is 16x16, given by its content like a replaced element
             else -> "<div data-node=\"$id\" style=\"${css(node)}\"><i style=\"display:block;width:16px;height:16px\"></i></div>"
