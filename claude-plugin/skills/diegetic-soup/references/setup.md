@@ -13,7 +13,7 @@ dependencies {
 }
 ```
 
-`<tag>` is a release tag such as `v0.1.2`. Each platform module brings `diegetic-core` (and JOML, whose
+`<tag>` is a release tag such as `v0.2.0`. Each platform module brings `diegetic-core` (and JOML, whose
 `Matrix4f`/`Vector3f`/`Quaternionf` appear in the API) with it. Adventure, Minestom, Paper and PacketEvents
 are expected on the classpath already (`compileOnly`). Requirements: Java 25, Minecraft 26.x.
 

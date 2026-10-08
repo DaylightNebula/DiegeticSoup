@@ -67,9 +67,9 @@ repositories {
 
 // build.gradle.kts
 dependencies {
-    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-minestom:v0.1.2")
+    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-minestom:v0.2.0")
     // or, for a Paper plugin (shade it into your plugin jar):
-    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-paper:v0.1.2")
+    implementation("com.github.DaylightNebula.DiegeticSoup:diegetic-paper:v0.2.0")
 }
 ```
 
@@ -286,7 +286,7 @@ headless Linux, run the suite under `xvfb-run`. Screenshots are saved to `test-m
 
 ## Releases
 
-The version is set in `gradle.properties` (currently `0.1.2`).
+The version is set in `gradle.properties` (currently `0.2.0`).
 
 - **CI** (`.github/workflows/ci.yml`) runs on every push to `master` and every pull request. One job
   builds the project and runs the scenarios that need no client; a second runs the full suite against
@@ -296,8 +296,8 @@ The version is set in `gradle.properties` (currently `0.1.2`).
   jars attached, notes generated from merged pull requests, and `jitpack-maven-repo.zip` for JitPack.
 
 ```bash
-git tag v0.1.2
-git push origin v0.1.2
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 Tags must look like `v1.2.3`; a suffix such as `v1.2.3-beta.1` makes a pre-release. Bump `version` in
