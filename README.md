@@ -4,6 +4,8 @@ Diegetic (in-world) UIs for [Minestom](https://minestom.net) and [Paper](https:/
 UIs are built from text and item display entities that are sent as packets only, so they cost the server
 no real entities, and the library only sends packets when something a player can see actually changes.
 
+![Flexbox panels in the demo world](docs/images/flexbox.jpg)
+
 - **Java builders and a Kotlin DSL** for the same API
 - **Flexbox layout**: text, items and containers laid out like CSS flexbox, with wrapping text and backgrounds
 - **Interaction**: buttons, toggles, radio groups and tabs, and sliders, with left and right clicks and
@@ -23,6 +25,34 @@ no real entities, and the library only sends packets when something a player can
 | [`paper`](paper) | `diegetic-paper` | Paper support through [PacketEvents](https://github.com/retrooper/packetevents). Includes `core`. |
 
 Requirements: Java 25 and Minecraft 26.x. Paper servers also need the PacketEvents plugin.
+
+## Demos
+
+[`demo-minestom`](demo-minestom) is a set of runnable Minestom servers that show off each feature. Start
+one, then join `localhost` with Minecraft 26.3:
+
+```bash
+./gradlew :demo-minestom:runDemo
+```
+
+That runs the hub with every station side by side. Add `-Pdemo=basics`, `flexbox`, `widgets`, `hud` or
+`animation` to run a single station. Players spawn in creative with a reach of 6 blocks, so the widgets
+are easy to click.
+
+| | |
+|---|---|
+| ![The demo hub](docs/images/hub.jpg) | ![The basics](docs/images/basics.jpg) |
+| **The hub:** every station in one world. | **Basics:** animated item and text displays, built with the Kotlin DSL (left) and the Java builders (right). |
+| ![Flexbox layouts](docs/images/flexbox.jpg) | ![Interactive widgets](docs/images/widgets.jpg) |
+| **Flexbox:** a shop panel built in Java, and every `justify-content` and `align-items` value. | **Widgets:** a settings panel whose tabs swap its contents, and a counter shared by everyone. |
+| ![The shared counter after three clicks](docs/images/widgets-clicked.jpg) | ![A HUD following the player](docs/images/hud-view.jpg) |
+| **Clicking:** the counter after three left clicks, with the button highlighted on hover. | **Follow the player:** each player can turn on their own HUD, which moves with their view. |
+| ![Animation](docs/images/animation.jpg) | |
+| **Animation:** an orbit of items, and the same stepped motion snapping (left) and smoothed by interpolation (right). | |
+
+The pictures are real screenshots. `./gradlew :demo-minestom:captureDemoScreenshots` starts the hub,
+drives a Minecraft client through it with [NebsClient](https://github.com/DaylightNebula/NebsClient)
+(clicking the counter and opening the HUD along the way) and saves them to `docs/images`.
 
 ## Installation
 
