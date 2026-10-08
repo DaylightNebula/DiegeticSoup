@@ -1,0 +1,10 @@
+{
+  "name": "diegetic-soup",
+  "description": "Teaches Claude to build diegetic (in-world) Minecraft UIs with Diegetic Soup: controllers, the Java builders and Kotlin DSL, flexbox layouts and clickable widgets on Minestom and Paper.",
+  "author": {
+    "name": "DaylightNebula"
+  },
+  "homepage": "https://github.com/DaylightNebula/DiegeticSoup",
+  "repository": "https://github.com/DaylightNebula/DiegeticSoup",
+  "keywords": ["minecraft", "minestom", "paper", "ui", "display-entities", "flexbox"]
+}

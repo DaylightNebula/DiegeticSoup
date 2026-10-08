@@ -1,0 +1,16 @@
+{
+  "name": "diegetic",
+  "owner": {
+    "name": "DaylightNebula"
+  },
+  "metadata": {
+    "description": "Claude Code skills for Diegetic Soup, in-world UIs for Minestom and Paper Minecraft servers."
+  },
+  "plugins": [
+    {
+      "name": "diegetic-soup",
+      "source": "./claude-plugin",
+      "description": "Build in-world UIs, flexbox panels and clickable widgets for Minestom and Paper servers."
+    }
+  ]
+}

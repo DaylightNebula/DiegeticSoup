@@ -63,3 +63,12 @@ configure(subprojects.filter { it.name in publishedModules }) {
         }
     }
 }
+
+// Installs the Claude Code skill from this checkout: into <project>/.claude/skills, or ~/.claude/skills with -Puser=true.
+tasks.register<Copy>("installClaudeSkill") {
+    group = "help"
+    description = "Install the diegetic-soup Claude Code skill into .claude/skills (or ~/.claude/skills with -Puser=true)."
+    val user = providers.gradleProperty("user").map { it.toBoolean() }.getOrElse(false)
+    from(layout.projectDirectory.dir("claude-plugin/skills"))
+    into(if (user) file("${System.getProperty("user.home")}/.claude/skills") else layout.projectDirectory.dir(".claude/skills"))
+}

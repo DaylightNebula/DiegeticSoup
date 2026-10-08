@@ -312,6 +312,21 @@ Other versions, such as commit hashes, fall back to building with Gradle, which 
 lasts. Once the release workflow has finished, open the [JitPack page](https://jitpack.io/#DaylightNebula/DiegeticSoup)
 and press "Get it" so the first user doesn't wait.
 
+## Claude Code
+
+[`claude-plugin/skills/diegetic-soup`](claude-plugin/skills/diegetic-soup) is a Claude Code skill that
+teaches Claude to use this library: setup on Minestom and Paper, controllers and elements, flexbox layouts,
+and interactive widgets. Edit it whenever the API changes. Ways to install it:
+
+| From | How |
+|------|-----|
+| GitHub | `/plugin marketplace add DaylightNebula/DiegeticSoup`, then `/plugin install diegetic-soup@diegetic` |
+| This repository | `./gradlew installClaudeSkill` → `.claude/skills/diegetic-soup` (`-Puser=true` for `~/.claude/skills`) |
+| The library | `ClaudeSkill.install(Path.of(".claude/skills"))` (`dsh.diegetic`), or `java -cp diegetic-core-<version>.jar dsh.diegetic.ClaudeSkill [dir]` |
+
+The skill is bundled into the `diegetic-core` jar at build time, so the copy installed from a dependency
+always matches that version of the library.
+
 ## License
 
 [MIT](LICENSE.txt)
