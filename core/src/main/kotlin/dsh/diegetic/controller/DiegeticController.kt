@@ -87,6 +87,8 @@ class DiegeticController(
     private val interactionTargets = mutableMapOf<Int, Interactive>()
     private val interactionPlacements = mutableMapOf<Int, Placement>()
     private var tickCount = 0L
+    /** Set once removed, so a tick already scheduled in the same pass doesn't re-spawn the UI. */
+    private var destroyed = false
 
     fun getViewers(): Collection<DPlayer> = viewers
     fun getRootPosition(): DLocation = rootPosition
@@ -100,6 +102,7 @@ class DiegeticController(
     }
 
     fun tick() {
+        if (destroyed) return
         tickCount++
         val position = positionController.getPosition()
 
@@ -126,6 +129,8 @@ class DiegeticController(
 
         // input first, so state changes show in this tick's render
         processClicks()
+        // a click handler may have removed this UI
+        if (destroyed) return
         updateHover()
 
         // render once per group of viewers that should see the same thing, then diff per viewer
@@ -146,6 +151,7 @@ class DiegeticController(
     }
 
     fun destroy() {
+        destroyed = true
         val packets = DiegeticAPI.get().getPacketAPI()
         sent.forEach { (viewer, entities) -> if (entities.isNotEmpty()) packets.removeEntities(listOf(viewer), entities.keys) }
         sent.clear()
